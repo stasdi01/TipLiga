@@ -53,15 +53,11 @@ export default function PredictionCard({
     { type: PredictionType.TEAM2_OR_DRAW, label: `${game.team2} ili ner.` },
   ];
 
-  function btnClass(type: PredictionType) {
-    const inTicket = ticketPick === type;
-    const isSaved = savedPrediction === type && ticketPick === null;
-    const hasResult = game.result !== null;
-
+  function btnClass(type: PredictionType): string {
     if (game.is_locked) {
-      if (isSaved || (savedPrediction === type)) {
-        const correct = hasResult && (pointsEarned ?? 0) > 0;
-        const wrong = hasResult && pointsEarned === 0;
+      if (savedPrediction === type) {
+        const correct = game.result !== null && (pointsEarned ?? 0) > 0;
+        const wrong = game.result !== null && pointsEarned === 0;
         if (correct) return "bg-green-500/20 text-green-400 border-green-500/40";
         if (wrong) return "bg-destructive/15 text-destructive border-destructive/30";
         return "bg-primary/20 text-primary border-primary/50";
@@ -69,19 +65,38 @@ export default function PredictionCard({
       return "bg-secondary/40 text-muted-foreground/40 border-border/40 cursor-not-allowed opacity-50";
     }
 
-    if (inTicket) return "bg-primary text-primary-foreground border-primary shadow-[0_0_12px_rgba(245,197,24,0.4)]";
-    if (isSaved) return "bg-primary/20 text-primary border-primary/50";
+    const isSelected = ticketPick === type;
+    const otherSelected = ticketPick !== null && !isSelected;
+
+    if (isSelected) return "border-primary font-bold";
+    if (savedPrediction === type) return "bg-primary/20 text-primary border-primary/50";
+    if (otherSelected) return "bg-secondary border-border text-muted-foreground/40 opacity-40";
     return "bg-secondary border-border text-foreground hover:bg-primary/10 hover:border-primary/40 hover:text-primary transition-all duration-150 hover:scale-[1.02] active:scale-[0.97]";
   }
 
+  function btnStyle(type: PredictionType): React.CSSProperties | undefined {
+    if (!game.is_locked && ticketPick === type) {
+      return {
+        backgroundColor: "var(--primary)",
+        color: "var(--primary-foreground)",
+        borderColor: "var(--primary)",
+      };
+    }
+    return undefined;
+  }
+
   return (
-    <div className={`bg-card border rounded-xl p-4 space-y-3 transition-all duration-200 ${
-      ticketPick ? "border-primary/30 shadow-[0_0_12px_rgba(245,197,24,0.08)]" : "border-border"
-    }`}>
+    <div
+      className={`bg-card border rounded-xl p-4 space-y-3 transition-all duration-200 ${
+        ticketPick ? "border-primary/60" : "border-border"
+      }`}
+    >
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="font-semibold text-foreground text-sm leading-tight">
-            {game.team1} <span className="text-muted-foreground font-normal">vs</span> {game.team2}
+            {game.team1}{" "}
+            <span className="text-muted-foreground font-normal">vs</span>{" "}
+            {game.team2}
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
             {game.group} · {formatTime(game.kickoff_time)}
@@ -97,7 +112,11 @@ export default function PredictionCard({
             <span className="flex items-center gap-1 text-xs text-muted-foreground/60">
               <Lock size={11} />
               {savedPrediction && pointsEarned !== null && (
-                <span className={pointsEarned > 0 ? "text-primary font-semibold" : "text-destructive"}>
+                <span
+                  className={
+                    pointsEarned > 0 ? "text-primary font-semibold" : "text-destructive"
+                  }
+                >
                   {pointsEarned}pt
                 </span>
               )}
@@ -110,8 +129,11 @@ export default function PredictionCard({
         {straight.map(({ type, label }) => (
           <button
             key={type}
-            onClick={() => !game.is_locked && onSelect(game.id, game.team1, game.team2, type)}
+            onClick={() =>
+              !game.is_locked && onSelect(game.id, game.team1, game.team2, type)
+            }
             disabled={game.is_locked}
+            style={btnStyle(type)}
             className={`text-xs py-2 px-1 rounded-lg border font-medium text-center truncate ${btnClass(type)}`}
           >
             {label}
@@ -123,8 +145,11 @@ export default function PredictionCard({
         {hedged.map(({ type, label }) => (
           <button
             key={type}
-            onClick={() => !game.is_locked && onSelect(game.id, game.team1, game.team2, type)}
+            onClick={() =>
+              !game.is_locked && onSelect(game.id, game.team1, game.team2, type)
+            }
             disabled={game.is_locked}
+            style={btnStyle(type)}
             className={`text-xs py-1.5 px-1 rounded-lg border font-medium text-center truncate ${btnClass(type)}`}
           >
             <span className="text-[10px] mr-1 opacity-60">1pt</span>

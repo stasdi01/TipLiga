@@ -144,12 +144,13 @@ export default function TicketPanel({
       {/* Tab trigger — sticks to right edge, vertically centered */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-20 bg-primary text-primary-foreground rounded-l-xl shadow-[-4px_0_24px_rgba(0,0,0,0.8)] flex flex-col items-center gap-1.5 px-2.5 py-4 hover:px-3 active:scale-95 transition-all duration-200"
+        className="fixed right-0 top-1/2 -translate-y-1/2 z-20 bg-primary text-primary-foreground rounded-l-2xl flex flex-col items-center gap-2 px-4 py-6 active:scale-95 transition-all duration-200"
+        style={{ boxShadow: "-4px 0 32px rgba(245,197,24,0.6), -2px 0 12px rgba(0,0,0,0.8)" }}
         aria-label="Otvori listić"
       >
-        <span className="font-black text-lg leading-none">{picks.length}</span>
+        <span className="font-black text-2xl leading-none">{picks.length}</span>
         <span
-          className="text-[9px] font-bold tracking-widest"
+          className="text-[10px] font-bold tracking-widest"
           style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
         >
           LISTIĆ
