@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PredictionType {
+  TEAM1
+  DRAW
+  TEAM2
+  TEAM1_OR_DRAW
+  TEAM2_OR_DRAW
+}
+
+enum GameOutcome {
+  TEAM1_WIN
+  DRAW
+  TEAM2_WIN
+}
+
+model User {
+  id              String       @id @default(uuid())
+  username        String       @unique
+  password_hash   String
+  status          UserStatus   @default(ACTIVE)
+  referral_code   String       @unique
+  referred_by_id  String?
+  referred_by     User?        @relation("Referrals", fields: [referred_by_id], references: [id])
+  referrals       User[]       @relation("Referrals")
+  referral_points Int          @default(0)
+  predictions     Prediction[]
+  created_at      DateTime     @default(now())
+
+  @@map("users")
+}
+
+model Game {
+  id           String       @id @default(uuid())
+  team1        String
+  team2        String
+  group        String
+  kickoff_time DateTime
+  is_locked    Boolean      @default(false)
+  predictions  Prediction[]
+  result       Result?
+  created_at   DateTime     @default(now())
+
+  @@map("games")
+}
+
+model Prediction {
+  id            String         @id @default(uuid())
+  user_id       String
+  user          User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  game_id       String
+  game          Game           @relation(fields: [game_id], references: [id], onDelete: Cascade)
+  prediction    PredictionType
+  points_earned Int?
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+
+  @@unique([user_id, game_id])
+  @@map("predictions")
+}
+
+model Result {
+  id         String      @id @default(uuid())
+  game_id    String      @unique
+  game       Game        @relation(fields: [game_id], references: [id], onDelete: Cascade)
+  outcome    GameOutcome
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+
+  @@map("results")
+}
