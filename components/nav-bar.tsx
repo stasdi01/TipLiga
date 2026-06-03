@@ -47,7 +47,7 @@ export default function NavBar({
             )}
             <button
               onClick={handleLogout}
-              className="text-muted-foreground hover:text-destructive transition-colors"
+              className="text-muted-foreground hover:text-destructive transition-all duration-200 hover:scale-110 active:scale-95"
               aria-label="Odjavi se"
             >
               <LogOut size={18} />
@@ -65,7 +65,7 @@ export default function NavBar({
               <Link
                 key={href}
                 href={href}
-                className={`flex flex-col items-center justify-center py-3 gap-1 text-xs transition-colors ${
+                className={`flex flex-col items-center justify-center py-3 gap-1 text-xs transition-all duration-200 hover:scale-[1.08] active:scale-[0.95] ${
                   active
                     ? "text-primary"
                     : "text-muted-foreground hover:text-foreground"

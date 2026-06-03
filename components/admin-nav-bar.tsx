@@ -36,9 +36,9 @@ export default function AdminNavBar() {
                 <Link
                   key={href}
                   href={href}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-colors ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-all duration-200 hover:scale-[1.04] active:scale-[0.97] ${
                     active
-                      ? "bg-primary/10 text-primary"
+                      ? "bg-primary/10 text-primary shadow-[0_0_12px_rgba(245,197,24,0.15)]"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
@@ -58,7 +58,7 @@ export default function AdminNavBar() {
           </Link>
           <button
             onClick={handleLogout}
-            className="text-muted-foreground hover:text-destructive transition-colors"
+            className="text-muted-foreground hover:text-destructive transition-all duration-200 hover:scale-110 active:scale-95"
             aria-label="Odjavi se"
           >
             <LogOut size={18} />

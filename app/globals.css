@@ -6,6 +6,30 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .btn-primary {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 200ms ease;
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 0 24px rgba(245, 197, 24, 0.45);
+    transform: scale(1.02);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
 }
 
 @layer base {

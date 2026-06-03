@@ -101,7 +101,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-12 rounded-lg bg-primary text-primary-foreground font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
+            className="w-full h-12 rounded-lg bg-primary text-primary-foreground font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[0_0_24px_rgba(245,197,24,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
           >
             {loading ? "Prijavljivanje..." : "Prijavi se"}
           </button>
