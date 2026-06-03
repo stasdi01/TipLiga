@@ -50,6 +50,7 @@ function formatDate(date: Date) {
     month: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "UTC",
   }).format(new Date(date));
 }
 

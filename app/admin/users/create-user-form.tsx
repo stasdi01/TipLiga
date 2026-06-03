@@ -51,7 +51,7 @@ export default function CreateUserForm() {
             </label>
             <input
               name="password"
-              type="text"
+              type="password"
               required
               className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="min. 6 karaktera"

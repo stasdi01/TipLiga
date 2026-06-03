@@ -9,6 +9,7 @@ function formatKickoff(date: Date) {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "UTC",
   }).format(new Date(date));
 }
 

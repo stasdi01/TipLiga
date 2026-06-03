@@ -92,11 +92,8 @@ export default function CreateGameForm() {
             </label>
             <input
               name="kickoff_time_of_day"
-              type="text"
+              type="time"
               required
-              placeholder="21:00"
-              pattern="^([01]\d|2[0-3]):[0-5]\d$"
-              title="Format: HH:MM (npr. 21:00)"
               className="w-full h-10 px-3 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>

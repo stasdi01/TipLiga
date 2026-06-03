@@ -26,7 +26,7 @@ export async function createGame(
   if (!WC_GROUPS.includes(group))
     return { error: "Nevažeća grupa" };
 
-  const kickoff_time = new Date(`${kickoff_date}T${kickoff_time_of_day}:00`);
+  const kickoff_time = new Date(`${kickoff_date}T${kickoff_time_of_day}:00Z`);
   if (isNaN(kickoff_time.getTime()))
     return { error: "Nevažeći datum i vreme" };
 
