@@ -17,17 +17,10 @@ export async function POST(request: NextRequest) {
   let id: string;
   let role: "admin" | "user";
 
-  if (username === process.env.ADMIN_USERNAME) {
-    const valid = await bcrypt.compare(
-      password,
-      process.env.ADMIN_PASSWORD_HASH!
-    );
-    if (!valid) {
-      return NextResponse.json(
-        { error: "Pogrešno korisničko ime ili lozinka" },
-        { status: 401 }
-      );
-    }
+  if (
+    username === process.env.ADMIN_USERNAME &&
+    password === process.env.ADMIN_PASSWORD
+  ) {
     id = "admin";
     role = "admin";
   } else {
