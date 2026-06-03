@@ -24,15 +24,18 @@ export default async function PredictionsPage({
         })
       : [];
 
-  const groups = Array.from(new Set(allGames.map((g) => g.group))).sort();
+  const openGames = allGames.filter((g) => !g.is_locked);
+  const lockedGames = allGames.filter((g) => g.is_locked);
+  const groups = Array.from(new Set(openGames.map((g) => g.group))).sort();
 
-  const games = searchParams.group
-    ? allGames.filter((g) => g.group === searchParams.group)
-    : allGames;
+  const filteredOpen = searchParams.group
+    ? openGames.filter((g) => g.group === searchParams.group)
+    : openGames;
 
   return (
     <PredictionsClient
-      games={games}
+      openGames={filteredOpen}
+      lockedGames={lockedGames}
       savedPredictions={savedPredictions}
       groups={groups}
     />
