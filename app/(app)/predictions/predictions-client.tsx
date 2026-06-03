@@ -165,7 +165,7 @@ export default function PredictionsClient({
   const unpredicted = tipujGames.filter((g) => !ticket.has(g.id)).length;
 
   return (
-    <div className="space-y-4 pb-36">
+    <div className="space-y-4 pb-6">
       <div>
         <h1 className="text-xl font-bold text-foreground">Tipovi</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
