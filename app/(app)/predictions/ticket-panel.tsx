@@ -31,7 +31,7 @@ export default function TicketPanel({
   picks: TicketPick[];
   onRemove: (gameId: string) => void;
   onClear: () => void;
-  onConfirmed: () => void;
+  onConfirmed: (confirmedIds: string[]) => void;
 }) {
   const [open, setOpen] = useState(true);
   const [pending, startTransition] = useTransition();
@@ -45,7 +45,7 @@ export default function TicketPanel({
         picks.map((p) => ({ gameId: p.gameId, prediction: p.prediction }))
       );
       setSavedCount(result.saved);
-      onConfirmed();
+      onConfirmed(picks.map((p) => p.gameId));
       setTimeout(() => setSavedCount(null), 3000);
     });
   }

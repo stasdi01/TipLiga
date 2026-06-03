@@ -61,16 +61,18 @@ function HistoryRow({ game, pred }: { game: Game; pred?: SavedPred }) {
   let statusIcon = <MinusCircle size={14} className="text-muted-foreground/50" />;
   let statusClass = "text-muted-foreground";
 
-  if (hasPred && hasResult && pts !== null) {
+  if (hasPred && hasResult) {
     if (pts === 2) {
       statusIcon = <CheckCircle2 size={14} className="text-green-400" />;
       statusClass = "text-green-400";
     } else if (pts === 1) {
-      statusIcon = <CheckCircle2 size={14} className="text-primary" />;
-      statusClass = "text-primary";
+      statusIcon = <CheckCircle2 size={14} className="text-yellow-400" />;
+      statusClass = "text-yellow-400";
+    } else if (pts === 0) {
+      statusIcon = <XCircle size={14} className="text-red-400" />;
+      statusClass = "text-red-400";
     } else {
-      statusIcon = <XCircle size={14} className="text-destructive" />;
-      statusClass = "text-destructive";
+      statusIcon = <Clock size={14} className="text-muted-foreground" />;
     }
   } else if (hasPred && !hasResult) {
     statusIcon = <Clock size={14} className="text-muted-foreground" />;
@@ -120,6 +122,8 @@ export default function PredictionsClient({
 }: Props) {
   const [tab, setTab] = useState<"tipuj" | "istorija">("tipuj");
   const [ticket, setTicket] = useState<Map<string, TicketPick>>(new Map());
+  // Games confirmed this session — hidden from Tipuj immediately without waiting for server
+  const [localConfirmed, setLocalConfirmed] = useState<Set<string>>(new Set());
 
   const savedMap = new Map(savedPredictions.map((p) => [p.game_id, p]));
 
@@ -135,17 +139,32 @@ export default function PredictionsClient({
     });
   }
 
-  const ticketPicks = Array.from(ticket.values());
-  const unpredicted = openGames.filter(
-    (g) => !savedMap.has(g.id) && !ticket.has(g.id)
-  ).length;
+  function handleConfirmed(confirmedIds: string[]) {
+    setTicket(new Map());
+    setLocalConfirmed((prev) => {
+      const next = new Set(prev);
+      confirmedIds.forEach((id) => next.add(id));
+      return next;
+    });
+  }
 
-  const tippedLocked = lockedGames.filter((g) => savedMap.has(g.id)).length;
-  const missedLocked = lockedGames.filter((g) => !savedMap.has(g.id)).length;
+  // Games confirmed = already in DB or confirmed locally this session
+  function isPredicted(gameId: string) {
+    return savedMap.has(gameId) || localConfirmed.has(gameId);
+  }
+
+  // Tipuj: open games with no confirmed prediction (ticket picks still visible here)
+  const tipujGames = openGames.filter((g) => !isPredicted(g.id));
+
+  // Istorija: open games already predicted + all locked games
+  const confirmedOpenGames = openGames.filter((g) => isPredicted(g.id));
+  const historijGames = [...confirmedOpenGames, ...lockedGames];
+
+  const ticketPicks = Array.from(ticket.values());
+  const unpredicted = tipujGames.filter((g) => !ticket.has(g.id)).length;
 
   return (
     <div className="space-y-4 pb-36">
-      {/* Page header */}
       <div>
         <h1 className="text-xl font-bold text-foreground">Tipovi</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
@@ -153,7 +172,7 @@ export default function PredictionsClient({
             ? unpredicted > 0
               ? `${unpredicted} utakmica čeka tvoj tip`
               : "Sve otvorene utakmice su tipovane!"
-            : `${tippedLocked} tipovano · ${missedLocked} propušteno`}
+            : `${historijGames.length} u istoriji`}
         </p>
       </div>
 
@@ -169,7 +188,9 @@ export default function PredictionsClient({
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            {t === "tipuj" ? "Tipuj" : `Istorija (${lockedGames.length})`}
+            {t === "tipuj"
+              ? `Tipuj${tipujGames.length > 0 ? ` (${tipujGames.length})` : ""}`
+              : `Istorija (${historijGames.length})`}
           </button>
         ))}
       </div>
@@ -181,26 +202,26 @@ export default function PredictionsClient({
             <GroupFilter groups={groups} />
           </Suspense>
 
-          {openGames.length === 0 && (
-            <p className="text-muted-foreground text-sm text-center py-8">
-              Nema otvorenih utakmica u ovoj grupi.
-            </p>
+          {tipujGames.length === 0 && (
+            <div className="text-center py-10 space-y-1">
+              <p className="text-foreground font-medium text-sm">Sve tipovano! 🎉</p>
+              <p className="text-muted-foreground text-xs">
+                Idi na Istoriju da pratiš rezultate.
+              </p>
+            </div>
           )}
 
           <div className="space-y-3">
-            {openGames.map((game) => {
-              const saved = savedMap.get(game.id);
-              return (
-                <PredictionCard
-                  key={game.id}
-                  game={game}
-                  savedPrediction={saved?.prediction ?? null}
-                  pointsEarned={saved?.points_earned ?? null}
-                  ticketPick={ticket.get(game.id)?.prediction ?? null}
-                  onSelect={handleSelect}
-                />
-              );
-            })}
+            {tipujGames.map((game) => (
+              <PredictionCard
+                key={game.id}
+                game={game}
+                savedPrediction={null}
+                pointsEarned={null}
+                ticketPick={ticket.get(game.id)?.prediction ?? null}
+                onSelect={handleSelect}
+              />
+            ))}
           </div>
         </>
       )}
@@ -208,12 +229,12 @@ export default function PredictionsClient({
       {/* Istorija tab */}
       {tab === "istorija" && (
         <div className="rounded-xl border border-border overflow-hidden">
-          {lockedGames.length === 0 ? (
+          {historijGames.length === 0 ? (
             <p className="text-muted-foreground text-sm text-center py-8">
-              Nema zaključanih utakmica još uvek.
+              Još nisi potvrdio nijedan tip.
             </p>
           ) : (
-            lockedGames.map((game) => (
+            historijGames.map((game) => (
               <HistoryRow
                 key={game.id}
                 game={game}
@@ -234,7 +255,7 @@ export default function PredictionsClient({
           })
         }
         onClear={() => setTicket(new Map())}
-        onConfirmed={() => setTicket(new Map())}
+        onConfirmed={handleConfirmed}
       />
     </div>
   );
