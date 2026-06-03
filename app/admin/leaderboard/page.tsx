@@ -19,8 +19,8 @@ async function getAdminStandings() {
 
   return standings.map((row) => ({
     ...row,
-    referral_code: userMap.get(row.id)?.referral_code ?? "—",
-    referred_by: userMap.get(row.id)?.referred_by?.username ?? "—",
+    referral_code: userMap.get(row.id)?.referral_code ?? "",
+    referred_by: userMap.get(row.id)?.referred_by?.username ?? "",
     games_predicted: userMap.get(row.id)?._count.predictions ?? 0,
   }));
 }

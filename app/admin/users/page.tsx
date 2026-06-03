@@ -101,7 +101,7 @@ export default async function AdminUsersPage() {
                   {user.referral_code}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                  {user.referred_by?.username ?? "—"}
+                  {user.referred_by?.username ?? ""}
                 </td>
                 <td className="px-4 py-3 text-center text-muted-foreground">
                   {user.referral_count}
