@@ -53,7 +53,7 @@ export default function TicketPanel({
   return (
     <div className="fixed bottom-16 left-0 right-0 z-20 flex justify-center px-3 pointer-events-none">
       <div className="w-full max-w-2xl pointer-events-auto">
-        <div className="bg-card border border-primary/40 rounded-2xl shadow-[0_0_30px_rgba(245,197,24,0.15)] overflow-hidden">
+        <div className="bg-background border border-primary/70 rounded-2xl shadow-[0_-8px_40px_rgba(0,0,0,0.9),0_0_40px_rgba(245,197,24,0.3)] overflow-hidden">
 
           {/* Header */}
           <button
