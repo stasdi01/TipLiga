@@ -5,25 +5,34 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { PredictionType } from "@/app/generated/prisma";
 
-export async function savePrediction(
-  gameId: string,
-  prediction: PredictionType
-): Promise<void> {
+export async function saveTicket(
+  picks: { gameId: string; prediction: PredictionType }[]
+): Promise<{ saved: number }> {
   const session = await getSession();
-  if (!session || session.role !== "user") return;
+  if (!session || session.role !== "user") return { saved: 0 };
+  if (picks.length === 0) return { saved: 0 };
 
-  const game = await prisma.game.findUnique({
-    where: { id: gameId },
-    select: { is_locked: true },
+  const gameIds = picks.map((p) => p.gameId);
+  const games = await prisma.game.findMany({
+    where: { id: { in: gameIds }, is_locked: false },
+    select: { id: true },
   });
-  if (!game || game.is_locked) return;
+  const unlocked = new Set(games.map((g) => g.id));
 
-  await prisma.prediction.upsert({
-    where: { user_id_game_id: { user_id: session.id, game_id: gameId } },
-    create: { user_id: session.id, game_id: gameId, prediction },
-    update: { prediction },
-  });
+  const valid = picks.filter((p) => unlocked.has(p.gameId));
+  if (valid.length === 0) return { saved: 0 };
+
+  await Promise.all(
+    valid.map((p) =>
+      prisma.prediction.upsert({
+        where: { user_id_game_id: { user_id: session.id, game_id: p.gameId } },
+        create: { user_id: session.id, game_id: p.gameId, prediction: p.prediction },
+        update: { prediction: p.prediction },
+      })
+    )
+  );
 
   revalidatePath("/predictions");
   revalidatePath("/dashboard");
+  return { saved: valid.length };
 }

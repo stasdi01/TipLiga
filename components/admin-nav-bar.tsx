@@ -51,7 +51,7 @@ export default function AdminNavBar() {
         </div>
         <div className="flex items-center gap-3">
           <Link
-            href="/dashboard"
+            href="/leaderboard"
             className="text-xs text-muted-foreground hover:text-primary transition-colors"
           >
             Igrački prikaz
