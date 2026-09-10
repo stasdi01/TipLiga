@@ -14,7 +14,7 @@ Players pick match outcomes, earn points as results come in, and compete for a s
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
-### [🔗 Live app → tipliga-hazel.vercel.app](https://tipliga-hazel.vercel.app/login)
+### [ Live app → tipliga-hazel.vercel.app](https://tipliga-hazel.vercel.app/login)
 
 <sub>Invite-only: accounts are created by the admin, so there's no public sign-up.</sub>
 
