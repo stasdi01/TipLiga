@@ -195,4 +195,4 @@ Open [http://localhost:3000](http://localhost:3000) and log in with the admin cr
 
 ## Author
 
-**Dimitrije Stašić** · [GitHub @stasdi01](https://github.com/stasdi01)
+**Dimitrije Stasic** · [GitHub @stasdi01](https://github.com/stasdi01)
